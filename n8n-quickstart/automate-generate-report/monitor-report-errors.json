@@ -1,0 +1,100 @@
+{
+  "name": "Monitor Report Errors",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "176af842-24bd-4d73-8164-a486ba0dba13",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "33e6b6e5-4bbd-45ba-99bf-83e504e17171",
+              "name": "content",
+              "value": "=[794ac200e573e3acfd8a8c0178b4a601] Workflow Error Alert - Workflow: {{ $json.workflow.name }} | Error: {{ $json.execution.error.message }} | Last node: {{ $json.execution.lastNodeExecuted }} | Execution URL: {{ $json.execution.url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "1e86f09d-da20-4ea9-af96-8acdc63d1ef1",
+      "name": "BuildErrorMessage"
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{ $json.content }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "ba2119a9-41b3-4afe-a763-6b789c360645",
+      "name": "NotifyDiscord",
+      "webhookId": "3f836d46-e325-4f00-9f55-b8b25151b3aa",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "ncoXjAAwsCvbpTaO",
+          "name": "n8n Quickstart S2 Discord Webhook account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "BuildErrorMessage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BuildErrorMessage": {
+      "main": [
+        [
+          {
+            "node": "NotifyDiscord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "9dc8ae69-aa4b-4e80-8213-a4c281aaa34d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d018df81d39524fce88c2dad29279eb3c612b955af172e3ccdb7dd90da289d54"
+  },
+  "nodeGroups": [],
+  "id": "Gw7hXDhkS0L0R90u",
+  "tags": []
+}

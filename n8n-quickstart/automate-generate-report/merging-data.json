@@ -1,0 +1,242 @@
+{
+  "name": "Merging Data",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3ca66384-ccfc-49fb-b270-ba89dfe5e3bf",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "qcojYP0X8zqsz62j",
+          "mode": "list",
+          "cachedResultName": "asset v1 n8n QS101 2026H2 type asset block customers",
+          "cachedResultUrl": "/projects/P2pxSndpSjDiLNLv/datatables/qcojYP0X8zqsz62j"
+        },
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        352,
+        0
+      ],
+      "id": "d1cfaa8a-30f8-4016-b232-719bd4158197",
+      "name": "GetCustomers"
+    },
+    {
+      "parameters": {
+        "url": "https://learn.app.n8n.cloud/webhook/countries",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        352,
+        192
+      ],
+      "id": "bee8ed7a-8783-4c47-9d55-8b4a6985794d",
+      "name": "GetCountries"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "customerCountry",
+              "field2": "name"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        640,
+        16
+      ],
+      "id": "c5d45b24-6515-41fb-9dc3-3f6dc8f64d27",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "qcojYP0X8zqsz62j",
+          "mode": "list",
+          "cachedResultName": "asset v1 n8n QS101 2026H2 type asset block customers",
+          "cachedResultUrl": "/projects/P2pxSndpSjDiLNLv/datatables/qcojYP0X8zqsz62j"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "region": "={{ $json.region }}",
+            "subregion": "={{ $json.subregion }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "customerID",
+              "displayName": "customerID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "customerCountry",
+              "displayName": "customerCountry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "customerEmail",
+              "displayName": "customerEmail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "customerSince",
+              "displayName": "customerSince",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "region",
+              "displayName": "region",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "subregion",
+              "displayName": "subregion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        848,
+        16
+      ],
+      "id": "3f08cf43-85df-4e70-9d83-4256f980d413",
+      "name": "UpdateCustomers"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "GetCustomers",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "GetCountries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetCustomers": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetCountries": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "UpdateCustomers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "8d862acf-fff7-448f-9efb-3e2cf966f8e1",
+  "meta": {
+    "instanceId": "d018df81d39524fce88c2dad29279eb3c612b955af172e3ccdb7dd90da289d54"
+  },
+  "nodeGroups": [],
+  "id": "7ukq2URgm7zOdlka",
+  "tags": []
+}

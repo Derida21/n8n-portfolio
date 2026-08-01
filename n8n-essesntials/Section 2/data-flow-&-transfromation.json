@@ -1,0 +1,801 @@
+{
+  "name": "Section 2 - Data Flow & Transformation",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        288
+      ],
+      "id": "b45001b2-cfc5-480e-b305-22b1ce6e4fb1",
+      "name": "When clicking Execute workflow"
+    },
+    {
+      "parameters": {
+        "url": "https://jsonplaceholder.typicode.com/users",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "_limit",
+              "value": "5"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        144,
+        -64
+      ],
+      "id": "ae014379-6e35-49eb-ab3a-0a11774218ad",
+      "name": "Get Users"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1a1a1a1-b2b2-c3c3-d4d4-e5e5e5e5e5e5",
+              "name": "name",
+              "value": "={{$json.name}}",
+              "type": "string"
+            },
+            {
+              "id": "b2b2b2b2-c3c3-d4d4-e5e5-f6f6f6f6f6f6",
+              "name": "city",
+              "value": "={{$json.address.city}}",
+              "type": "string"
+            },
+            {
+              "id": "c3c3c3c3-d4d4-e5e5-f6f6-a7a7a7a7a7a7",
+              "name": "company",
+              "value": "={{$json.company.name}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        368,
+        -64
+      ],
+      "id": "2e0d5346-ce43-4315-9e71-c84e145c3a33",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        592,
+        -64
+      ],
+      "id": "52edb2dd-7941-43c3-adef-e48ad548d5e7",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        800,
+        -64
+      ],
+      "id": "0e9d71e8-33e9-4551-b929-961f40787ec9",
+      "name": "Split Out",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"orders\": [\n    { \"orderID\": 101, \"customer\": \"Alice\", \"total\": 85, \"source\": \"web\" },\n    { \"orderID\": 102, \"customer\": \"Bob\", \"total\": 120, \"source\": \"web\" }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -144,
+        320
+      ],
+      "id": "97b1bc66-73d7-4994-983a-b2aeff23b785",
+      "name": "Online Form Orders",
+      "notesInFlow": true,
+      "notes": "Simulates orders received from an online form"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "orders",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        96,
+        320
+      ],
+      "id": "c0d98b1f-8ab4-4980-881b-c9437bf7f661",
+      "name": "Split Online Orders",
+      "notesInFlow": true,
+      "notes": "1 item with array to 2 individual items"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"orders\": [\n    { \"orderID\": 201, \"customer\": \"Charlie\", \"total\": 200, \"source\": \"api\" },\n    { \"orderID\": 202, \"customer\": \"David\", \"total\": 65, \"source\": \"api\" }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -144,
+        560
+      ],
+      "id": "b8956f4f-20e6-4e13-b559-745e03618a70",
+      "name": "API Orders",
+      "notesInFlow": true,
+      "notes": "Simulates orders received from an external API"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "orders",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        96,
+        560
+      ],
+      "id": "583d3cbc-ba50-442d-84db-c5004272bb5b",
+      "name": "Split API Orders",
+      "notesInFlow": true,
+      "notes": "1 item with array to 2 individual items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        336,
+        448
+      ],
+      "id": "cc69a55d-0264-41e3-8068-a72a78fabee7",
+      "name": "Merge All Orders",
+      "notesInFlow": true,
+      "notes": "Appends both streams into a single list of 4 orders"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "allOrders",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        576,
+        448
+      ],
+      "id": "d8f812ef-7a3f-47ea-835d-b4865a322a01",
+      "name": "Collect Into Array",
+      "notesInFlow": true,
+      "notes": "4 separate items into 1 item containing all orders in a single array"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    json: {\n      customerID: 1,\n      name: \"Alice\"\n    }\n  },\n  {\n    json: {\n      customerID: 2,\n      name: \"Bob\"\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -176,
+        816
+      ],
+      "id": "cb2a6016-97d3-4cb8-a106-5547a3165dee",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    json: {\n      orderID :101,\n      customerID: 1,\n      price: 120\n    }\n  },\n  {\n    json: {\n      orderID : 102,\n      customerID: 2,\n      price: 80\n    }\n  }\n];\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -176,
+        1008
+      ],
+      "id": "adb505a3-4764-4299-ae8d-d28869d38066",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "customerID",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        96,
+        912
+      ],
+      "id": "c6e22834-e8d2-4458-9ea6-685c30546dee",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"orders\": [\n    { \"orderID\": 1, \"region\": \"Americas\", \"price\": 120 },\n    { \"orderID\": 2, \"region\": \"EMEA\", \"price\": 80 },\n    { \"orderID\": 3, \"region\": \"Americas\", \"price\": 200 }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -192,
+        1248
+      ],
+      "id": "1698c1ae-a176-473a-ad48-c4ec0a40a06f",
+      "name": "Sample Order Data",
+      "notesInFlow": true,
+      "notes": "Creates a sample dataset with 3 orders across Americas and EMEA regions"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f1e2d3c4-0001-4000-8000-000000000001",
+              "leftValue": "={{ $json.region }}",
+              "rightValue": "Americas",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        480,
+        1072
+      ],
+      "id": "6a14d372-c413-43f1-a20d-0e71303e4259",
+      "name": "Filter Americas",
+      "notesInFlow": true,
+      "notes": "Keeps only orders where region = Americas (2 of 3 pass)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f1e2d3c4-0002-4000-8000-000000000002",
+              "name": "price_with_tax",
+              "value": "={{ $json.price * 1.1 }}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        256,
+        1248
+      ],
+      "id": "28c80e4e-8a61-4c8e-92c1-b0481bf07876",
+      "name": "Add 10% Tax",
+      "notesInFlow": true,
+      "notes": "Adds price_with_tax field using the expression: price * 1.1"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "price_with_tax"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        688,
+        1248
+      ],
+      "id": "ba96552a-b6f4-42d6-a6e9-7c1fa8190c1b",
+      "name": "Total Price",
+      "notesInFlow": true,
+      "notes": "Sums price_with_tax across all remaining items = 352"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "orders",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        32,
+        1248
+      ],
+      "id": "90708591-4573-4d6b-bbdc-30f0336c4545",
+      "name": "Split Out1",
+      "notesInFlow": true,
+      "notes": "Converts the orders array into 3 individual items"
+    }
+  ],
+  "pinData": {
+    "Online Form Orders": [
+      {
+        "json": {
+          "orders": [
+            {
+              "orderID": 101,
+              "customer": "Alice",
+              "total": 85,
+              "source": "web"
+            },
+            {
+              "orderID": 102,
+              "customer": "Bob",
+              "total": 120,
+              "source": "web"
+            }
+          ]
+        }
+      }
+    ],
+    "Split Online Orders": [
+      {
+        "json": {
+          "orderID": 101,
+          "customer": "Alice",
+          "total": 85,
+          "source": "web"
+        }
+      },
+      {
+        "json": {
+          "orderID": 102,
+          "customer": "Bob",
+          "total": 120,
+          "source": "web"
+        }
+      }
+    ],
+    "API Orders": [
+      {
+        "json": {
+          "orders": [
+            {
+              "orderID": 201,
+              "customer": "Charlie",
+              "total": 200,
+              "source": "api"
+            },
+            {
+              "orderID": 202,
+              "customer": "David",
+              "total": 65,
+              "source": "api"
+            }
+          ]
+        }
+      }
+    ],
+    "Split API Orders": [
+      {
+        "json": {
+          "orderID": 201,
+          "customer": "Charlie",
+          "total": 200,
+          "source": "api"
+        }
+      },
+      {
+        "json": {
+          "orderID": 202,
+          "customer": "David",
+          "total": 65,
+          "source": "api"
+        }
+      }
+    ],
+    "Merge All Orders": [
+      {
+        "json": {
+          "orderID": 101,
+          "customer": "Alice",
+          "total": 85,
+          "source": "web"
+        }
+      },
+      {
+        "json": {
+          "orderID": 102,
+          "customer": "Bob",
+          "total": 120,
+          "source": "web"
+        }
+      },
+      {
+        "json": {
+          "orderID": 201,
+          "customer": "Charlie",
+          "total": 200,
+          "source": "api"
+        }
+      },
+      {
+        "json": {
+          "orderID": 202,
+          "customer": "David",
+          "total": 65,
+          "source": "api"
+        }
+      }
+    ],
+    "Collect Into Array": [
+      {
+        "json": {
+          "allOrders": [
+            {
+              "orderID": 101,
+              "customer": "Alice",
+              "total": 85,
+              "source": "web"
+            },
+            {
+              "orderID": 102,
+              "customer": "Bob",
+              "total": 120,
+              "source": "web"
+            },
+            {
+              "orderID": 201,
+              "customer": "Charlie",
+              "total": 200,
+              "source": "api"
+            },
+            {
+              "orderID": 202,
+              "customer": "David",
+              "total": 65,
+              "source": "api"
+            }
+          ]
+        }
+      }
+    ],
+    "Sample Order Data": [
+      {
+        "json": {
+          "orders": [
+            {
+              "orderID": 1,
+              "region": "Americas",
+              "price": 120
+            },
+            {
+              "orderID": 2,
+              "region": "EMEA",
+              "price": 80
+            },
+            {
+              "orderID": 3,
+              "region": "Americas",
+              "price": 200
+            }
+          ]
+        }
+      }
+    ],
+    "Split Out1": [
+      {
+        "json": {
+          "orderID": 1,
+          "region": "Americas",
+          "price": 120
+        }
+      },
+      {
+        "json": {
+          "orderID": 2,
+          "region": "EMEA",
+          "price": 80
+        }
+      },
+      {
+        "json": {
+          "orderID": 3,
+          "region": "Americas",
+          "price": 200
+        }
+      }
+    ],
+    "Filter Americas": [
+      {
+        "json": {
+          "orderID": 1,
+          "region": "Americas",
+          "price": 120
+        }
+      },
+      {
+        "json": {
+          "orderID": 3,
+          "region": "Americas",
+          "price": 200
+        }
+      }
+    ],
+    "Add 10% Tax": [
+      {
+        "json": {
+          "orderID": 1,
+          "region": "Americas",
+          "price": 120,
+          "price_with_tax": 132
+        }
+      },
+      {
+        "json": {
+          "orderID": 3,
+          "region": "Americas",
+          "price": 200,
+          "price_with_tax": 220
+        }
+      }
+    ],
+    "Total Price": [
+      {
+        "json": {
+          "price_with_tax": 352
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When clicking Execute workflow": {
+      "main": [
+        [
+          {
+            "node": "Get Users",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Online Form Orders",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "API Orders",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Sample Order Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Users": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Online Form Orders": {
+      "main": [
+        [
+          {
+            "node": "Split Online Orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Online Orders": {
+      "main": [
+        [
+          {
+            "node": "Merge All Orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "API Orders": {
+      "main": [
+        [
+          {
+            "node": "Split API Orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split API Orders": {
+      "main": [
+        [
+          {
+            "node": "Merge All Orders",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge All Orders": {
+      "main": [
+        [
+          {
+            "node": "Collect Into Array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect Into Array": {
+      "main": [
+        []
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Sample Order Data": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Americas": {
+      "main": [
+        [
+          {
+            "node": "Total Price",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add 10% Tax": {
+      "main": [
+        [
+          {
+            "node": "Filter Americas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Add 10% Tax",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "62f16904-9624-4444-aeef-664de4080a92",
+  "meta": {
+    "instanceId": "d018df81d39524fce88c2dad29279eb3c612b955af172e3ccdb7dd90da289d54"
+  },
+  "nodeGroups": [],
+  "id": "a7WeK5L7WV2B6KFu",
+  "tags": []
+}

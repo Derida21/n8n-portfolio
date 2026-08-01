@@ -1,0 +1,93 @@
+{
+  "name": "Section 2 - Order Report",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5207937b-3094-4fde-ba4e-65f1f45c58eb",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "z4l5XbhH536mTMXe",
+          "mode": "list",
+          "cachedResultName": "n8n102_course_orders",
+          "cachedResultUrl": "/projects/yjrQCl0G8ovfdHpY/datatables/z4l5XbhH536mTMXe"
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "82b5711a-8513-4173-b316-d1c232795f50",
+      "name": "GetAllOrders"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "05f38236-1740-4f83-90da-f41832f5ed92",
+      "name": "Summarize"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "GetAllOrders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetAllOrders": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "72c860fc-04a8-42b0-8639-56188ed832a3",
+  "meta": {
+    "instanceId": "d018df81d39524fce88c2dad29279eb3c612b955af172e3ccdb7dd90da289d54"
+  },
+  "nodeGroups": [],
+  "id": "fK4fhF92uGtYc03l",
+  "tags": []
+}
