@@ -1,0 +1,110 @@
+{
+  "name": "Section 2 - Error Handler (Error Workflow)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "23b9ee11-a0e7-49a8-9078-ceefc78b8b95",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://learn.app.n8n.cloud/webhook/course/n8n103/error-report",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Assessment-ID",
+              "value": "794ac200e573e3acfd8a8c0178b4a601"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "workflow_name",
+              "value": "={{ $json.workflow.name }}"
+            },
+            {
+              "name": "workflow_id",
+              "value": "={{ $json.workflow.id }}"
+            },
+            {
+              "name": "execution_url",
+              "value": "={{ $json.execution.url }}"
+            },
+            {
+              "name": "error_message",
+              "value": "={{ $json.execution.error.message }}"
+            },
+            {
+              "name": "failed_node",
+              "value": "={{ $json.execution.lastNodeExecuted }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "15ff2141-5675-4d98-a353-f571c914b905",
+      "name": "ReportError",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "UPeAmZS7BjVFtsbV",
+          "name": "n8n Academy API Key"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "ReportError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "ueX6vNqXjQBYxTIG",
+    "callerPolicy": "any"
+  },
+  "versionId": "1ceb636b-9b15-46fc-bb50-617feec11946",
+  "meta": {
+    "instanceId": "d018df81d39524fce88c2dad29279eb3c612b955af172e3ccdb7dd90da289d54"
+  },
+  "nodeGroups": [],
+  "id": "ueX6vNqXjQBYxTIG",
+  "tags": [
+    {
+      "name": "n8n103-course",
+      "id": "FPFoUf2bcBXeWVWc",
+      "updatedAt": "2026-08-02T04:44:06.533Z",
+      "createdAt": "2026-08-02T04:44:06.533Z"
+    }
+  ]
+}

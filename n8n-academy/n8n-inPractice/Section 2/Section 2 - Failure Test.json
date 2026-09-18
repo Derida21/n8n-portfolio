@@ -1,0 +1,95 @@
+{
+  "name": "Section 2 - Failure Test",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "course/n8n103/failure-test",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "51f1ebf3-3b19-4d6d-ae0a-9df8d3d5b534",
+      "name": "Webhook",
+      "webhookId": "7efd34c8-224d-4bc5-896f-633c6c06c5bb",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "UPeAmZS7BjVFtsbV",
+          "name": "n8n Academy API Key"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://learn.app.n8n.cloud/webhook/course/n8n103/guaranteed-failure",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Assessment-ID",
+              "value": "794ac200e573e3acfd8a8c0178b4a601"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "b084bb74-bec8-4692-8c8d-115e64d07d86",
+      "name": "CallFailingEndpoint",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "UPeAmZS7BjVFtsbV",
+          "name": "n8n Academy API Key"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "CallFailingEndpoint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "544bcce2-cb81-4045-a2cc-b5eda8457a01",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d018df81d39524fce88c2dad29279eb3c612b955af172e3ccdb7dd90da289d54"
+  },
+  "nodeGroups": [],
+  "id": "efkisa5JXHgvbi5P",
+  "tags": [
+    {
+      "name": "n8n103-course",
+      "id": "FPFoUf2bcBXeWVWc",
+      "updatedAt": "2026-08-02T04:44:06.533Z",
+      "createdAt": "2026-08-02T04:44:06.533Z"
+    }
+  ]
+}

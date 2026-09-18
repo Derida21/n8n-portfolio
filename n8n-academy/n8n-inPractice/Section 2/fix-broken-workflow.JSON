@@ -1,0 +1,257 @@
+{
+  "name": "Broken Workflow",
+  "nodes": [
+    {
+      "parameters": {
+
+      },
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-448, 240],
+      "id": "3270f3ff-c530-43ba-bd72-1cc5d3001082",
+      "name": "TriggerManual"
+    },
+    {
+      "parameters": {
+        "url": "https://learn.app.n8n.cloud/webhook/course/n8n103/orders-broken",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [-176, 144],
+      "id": "0892496c-95dc-45e2-9140-a76f27c6df56",
+      "name": "GetOrders",
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Dv0ebijL14GS0MdL",
+          "name": "Foundations Header Auth API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://learn.app.n8n.cloud/webhook/course/n8n103/customers-broken",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Assessment-id"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [-176, 352],
+      "id": "dd2305c9-1a8c-4c70-a0f0-086bed99bb95",
+      "name": "GetCustomers",
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Dv0ebijL14GS0MdL",
+          "name": "Foundations Header Auth API Key"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "customerId",
+        "joinMode": "enrichInput1",
+        "options": {
+
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [192, 256],
+      "id": "7b5a4e45-078d-41c3-b19c-95d47c0b9223",
+      "name": "MergeOrdersCustomers"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://learn.app.n8n.cloud/webhook/course/n8n103/debug-result",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Assessment-id"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "enriched_orders",
+              "value": "={{ $('AggregateOrders').item.json.enriched_orders }}"
+            }
+          ]
+        },
+        "options": {
+
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [416, 256],
+      "id": "b1690c62-04f7-4e6d-9b00-d9313993c2d1",
+      "name": "SendToOrdersQueue",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Dv0ebijL14GS0MdL",
+          "name": "Foundations Header Auth API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5d311efe-0ad8-40d2-a332-62ea7dd0f0fe",
+              "name": "customer_id",
+              "value": "unknown",
+              "type": "string"
+            },
+            {
+              "id": "6fbed7f6-a569-4a97-b1bc-06e8d0152a91",
+              "name": "company_name",
+              "value": "Unknown Company",
+              "type": "string"
+            },
+            {
+              "id": "c8f0e827-c874-4a94-97d8-a0818ea7e121",
+              "name": "subscription",
+              "value": "Starter",
+              "type": "string"
+            },
+            {
+              "id": "60e84d59-75be-4b21-bf08-abaa04b2b3f9",
+              "name": "account_manager",
+              "value": "Unassigned",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [32, 416],
+      "id": "33a513db-f360-4dd8-8c76-c512401fbe3f",
+      "name": "SetFallbackCustomer"
+    }
+  ],
+  "pinData": {
+
+  },
+  "connections": {
+    "TriggerManual": {
+      "main": [
+        [
+          {
+            "node": "GetOrders",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "GetCustomers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetOrders": {
+      "main": [
+        [
+          {
+            "node": "MergeOrdersCustomers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetCustomers": {
+      "main": [
+        [
+          {
+            "node": "MergeOrdersCustomers",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "SetFallbackCustomer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MergeOrdersCustomers": {
+      "main": [
+        [
+          {
+            "node": "SendToOrdersQueue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetFallbackCustomer": {
+      "main": [
+        [
+          {
+            "node": "MergeOrdersCustomers",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "3339e0d1-3487-465d-9ce1-d15594df34ed",
+  "meta": {
+    "instanceId": "4509f7cc2984e5ae553c7b853a20008969b3d010d4e3a96bd17d980321f01662"
+  },
+  "id": "cEWOTouHqlEzrHL1",
+  "tags": [
+    {
+      "updatedAt": "2026-02-12T17:07:51.056Z",
+      "createdAt": "2026-02-12T17:07:51.056Z",
+      "id": "PxodQrz3DtcMSXU3",
+      "name": "foundations-course"
+    }
+  ]
+}
